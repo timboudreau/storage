@@ -1,0 +1,17 @@
+*.class
+nbactions.xml
+nb-configuration.xml
+tiny-maven-proxy/.uids
+# Package Files #
+*.jar
+*.war
+*.ear
+*.orig
+*.iml
+.idea/*
+*~
+target/
+nbproject/
+nbactions.xml
+
+/tiny-maven-proxy/nbproject/

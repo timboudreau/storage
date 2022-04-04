@@ -92,10 +92,10 @@ public final class Buffers {
     }
 
     static final class M implements IntFunction<Buffers> {
-        private Map<Integer, Buffers> map = new HashMap<>();
+        private final Map<Integer, Buffers> map = new HashMap<>();
         private final IntFunction<Buffers> factory;
 
-        public M(IntFunction<Buffers> factory) {
+        M(IntFunction<Buffers> factory) {
             this.factory = factory;
         }
 
@@ -110,7 +110,7 @@ public final class Buffers {
 
         private final int size;
 
-        public HeapBBSupplier(int size) {
+        HeapBBSupplier(int size) {
             this.size = size;
         }
 
@@ -124,7 +124,7 @@ public final class Buffers {
 
         private final int size;
 
-        public DirectBBSupplier(int size) {
+        DirectBBSupplier(int size) {
             this.size = size;
         }
 

@@ -40,7 +40,7 @@ class SavableLongMapWrapper implements SavableLongMatrixMap {
     private final IntMatrixMap base;
     private final IntMatrixMap.LongMatrixMap delegate;
 
-    public SavableLongMapWrapper(IntMatrixMap base, IntMatrixMap.LongMatrixMap delegate) {
+    SavableLongMapWrapper(IntMatrixMap base, IntMatrixMap.LongMatrixMap delegate) {
         this.base = base;
         this.delegate = delegate;
     }

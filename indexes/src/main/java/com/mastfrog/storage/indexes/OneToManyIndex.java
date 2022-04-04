@@ -25,14 +25,14 @@ package com.mastfrog.storage.indexes;
 
 import com.mastfrog.bits.Bits;
 import com.mastfrog.bits.MutableBits;
-import com.mastfrog.storage.indexes.OneToManyIndex.OneToManyIndexWriter;
-import com.mastfrog.storage.Buffers;
-import com.mastfrog.storage.Storage;
-import com.mastfrog.storage.Storage.StorageSpecification;
-import com.mastfrog.storage.StorageIterator;
-import com.mastfrog.storage.ValueType;
 import com.mastfrog.function.LongBiConsumer;
 import com.mastfrog.function.LongBiPredicate;
+import com.mastfrog.storage.Buffers;
+import com.mastfrog.storage.Storage;
+import com.mastfrog.storage.StorageIterator;
+import com.mastfrog.storage.StorageSpecification;
+import com.mastfrog.storage.ValueType;
+import com.mastfrog.storage.indexes.OneToManyIndex.OneToManyIndexWriter;
 import com.mastfrog.util.preconditions.Exceptions;
 import com.mastfrog.util.search.Bias;
 import java.io.IOException;
@@ -95,6 +95,7 @@ public class OneToManyIndex {
 
         OneToManyIndexWriter buildInvertedIndex();
 
+        @Override
         void close() throws IOException;
     }
 
@@ -126,6 +127,7 @@ public class OneToManyIndex {
             this.dir = dir;
         }
 
+        @Override
         public synchronized OneToManyIndexWriter buildInvertedIndex() {
             try {
                 this.buildInvertedIndex = true;
@@ -253,6 +255,7 @@ public class OneToManyIndex {
 
         OneToManyIndexReader inverse() throws IOException;
 
+        @Override
         void close() throws IOException;
 
         default int closure(long key, LongPredicate pred) {
@@ -399,11 +402,11 @@ public class OneToManyIndex {
         private final Path dir;
         private volatile boolean closed;
 
-        public OneToManyIndexReaderImpl(Path dir, String name, StorageSpecification spec) throws IOException {
+        OneToManyIndexReaderImpl(Path dir, String name, StorageSpecification spec) throws IOException {
             this(dir, name, spec, false);
         }
 
-        public OneToManyIndexReaderImpl(Path dir, String name, StorageSpecification spec, boolean isInverse) throws IOException {
+        OneToManyIndexReaderImpl(Path dir, String name, StorageSpecification spec, boolean isInverse) throws IOException {
             Path index = dir.resolve(name + (isInverse ? ".m21" : ".12m"));
             Path counts = dir.resolve(name + ".counts");
             spec = spec.withSize(Long.BYTES * 3);
@@ -423,6 +426,7 @@ public class OneToManyIndex {
             this.isInverse = isInverse;
         }
 
+        @Override
         public synchronized OneToManyIndexReader inverse() throws IOException {
             if (sibling != null) {
                 return sibling;
@@ -487,6 +491,7 @@ public class OneToManyIndex {
             return result;
         }
 
+        @Override
         public Set<Long> valueSet(long key) {
             Set<Long> result = new TreeSet<>();
             values(key, v -> {
@@ -496,14 +501,17 @@ public class OneToManyIndex {
             return result;
         }
 
+        @Override
         public long size() {
             return sz;
         }
 
+        @Override
         public boolean isEmpty() {
             return ixStorage.size() < Long.BYTES * 2;
         }
 
+        @Override
         public void forEach(LongBiConsumer c) {
             for (ByteBuffer buf : ixStorage) {
                 buf.position(Integer.BYTES * 2);
@@ -511,6 +519,7 @@ public class OneToManyIndex {
             }
         }
 
+        @Override
         public int forEach(LongBiPredicate pred) {
             int ct = 0;
             for (ByteBuffer buf : ixStorage) {
@@ -542,15 +551,18 @@ public class OneToManyIndex {
             return ct;
         }
 
+        @Override
         public PrimitiveIterator.OfLong iterator() {
             return new StorageIterator(ixStorage, 0).adapted(0);
         }
 
+        @Override
         public long min() {
             return isEmpty() ? Long.MAX_VALUE
                     : ixStorage.readValue(0, 0, ValueType.LONG);
         }
 
+        @Override
         public long max() {
             return isEmpty() ? Long.MIN_VALUE
                     : ixStorage.readValue(sz - 1, 0, ValueType.LONG);
@@ -566,6 +578,7 @@ public class OneToManyIndex {
             return false;
         }
 
+        @Override
         public long nearestKey(long k, Bias bias) {
             long offset = ixStorage.binarySearch(k, Integer.BYTES * 2, ValueType.LONG, bias);
             if (offset >= 0) {

@@ -32,6 +32,7 @@ import java.nio.channels.FileChannel.MapMode;
 import java.util.function.IntFunction;
 
 /**
+ * Arbitrarily sized storage that uses as many memory-mappings as needed.
  *
  * @author Tim Boudreau
  */
@@ -46,7 +47,7 @@ public class MultiMappedStorage implements Storage {
 
     MultiMappedStorage(int recordSize, FileChannel channel, MapMode mode,
             boolean direct, IntFunction<Buffers> bufs) throws IOException {
-        this(recordSize, channel, mode, direct, (int) (2147483648L / (long) recordSize), bufs);
+        this(recordSize, channel, mode, direct, (int) (2_147_483_648L / (long) recordSize), bufs);
     }
 
     MultiMappedStorage(int recordSize, FileChannel channel, MapMode mode, boolean direct, int recordsPerPartition, IntFunction<Buffers> bufs) throws IOException {

@@ -23,7 +23,7 @@
  */
 package com.mastfrog.storage.indexes;
 
-import com.mastfrog.storage.Storage.StorageSpecification;
+import com.mastfrog.storage.StorageSpecification;
 import com.mastfrog.storage.ValueType;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -78,10 +78,10 @@ public final class Index<S extends Enum<S> & SchemaItem> {
         unique = EnumSet.noneOf(type);
         consts = type.getEnumConstants();
         int size = Integer.BYTES;
-        for (int i = 0; i < consts.length; i++) {
-            size += consts[i].type().size();
-            if (consts[i].indexKind().isUnique()) {
-                unique.add(consts[i]);
+        for (S const1 : consts) {
+            size += const1.type().size();
+            if (const1.indexKind().isUnique()) {
+                unique.add(const1);
             }
         }
         this.recordSize = size;
@@ -218,6 +218,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
             super(dir, name, indices, recordSize, spec);
         }
 
+        @Override
         public void write(long offset) {
             ByteBuffer buf = buffer();
             buf.putLong(offset);
@@ -233,6 +234,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
             super(dir, name, indices, recordSize, spec);
         }
 
+        @Override
         public void write(long offset, long id) {
             ByteBuffer buf = buffer();
             buf.putLong(offset);
@@ -249,6 +251,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
             super(dir, name, indices, recordSize, spec);
         }
 
+        @Override
         public void write(long offset, long id, long data) {
             ByteBuffer buf = buffer();
             buf.putLong(offset);
@@ -266,6 +269,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
             super(dir, name, indices, recordSize, spec);
         }
 
+        @Override
         public void write(long offset, long id, long data, int x) {
             ByteBuffer buf = buffer();
             buf.putLong(offset);
@@ -284,6 +288,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
             super(dir, name, indices, recordSize, spec);
         }
 
+        @Override
         public void write(long offset, long id, long data, long x, long y) {
             ByteBuffer buf = buffer();
             buf.putLong(offset);

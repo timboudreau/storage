@@ -37,7 +37,7 @@ final class StorageSpliterator implements Spliterator<ByteBuffer> {
     private long start;
     private long end;
 
-    public StorageSpliterator(Storage storage, long start, long end) {
+    StorageSpliterator(Storage storage, long start, long end) {
         this.storage = storage;
         this.start = start;
         this.end = end;

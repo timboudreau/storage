@@ -28,10 +28,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLongArray;
 
 /**
+ * Internal stats AdaptiveStorage uses to decide when to replace its underlying
+ * storage, flipping to/from mapped mode.
  *
  * @author Tim Boudreau
  */
-class Stats {
+final class Stats {
 
     private final AtomicInteger cursor = new AtomicInteger();
     private final AtomicLongArray stats;
@@ -65,13 +67,13 @@ class Stats {
     }
 
     boolean isUntouched() {
-        return isBelowThreshold(stats.length() / 2, 2000);
+        return isBelowThreshold(stats.length() / 2, 2_000);
     }
 
     boolean touched() {
         int t = touch();
         if (t > 0 && t % stats.length() == 0) {
-            return isBelowThreshold(stats.length() / 2, 1000);
+            return isBelowThreshold(stats.length() / 2, 1_000);
         }
         return false;
     }
@@ -80,9 +82,7 @@ class Stats {
         int len = stats.length();
         int now = Math.abs(cursor.getAndIncrement());
         int item = now % len;
-        long when = System.currentTimeMillis();
         stats.getAndUpdate(item, old -> System.currentTimeMillis());
         return now;
     }
-
 }

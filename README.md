@@ -1,10 +1,11 @@
 Storage
 =======
 
-A set of libraries for working with memory-mapped data and fixed-record-length storage.
+A set of libraries for working with memory-mapped data and fixed-record-length storage, to build single-purpose,
+high-performance, persistent micro-databases.
 
 Originally written for building efficient indexes into Java heap dumps, this library provides a general-purpose
-set of tools for building such indexes.
+set of tools for working with arbitrarily sized memory-mapped binary data, and building such indexes.
 
 These allow you to build single-purpose high-performance persistent micro-databases.
 
@@ -15,7 +16,7 @@ The Storage Library
 A `Storage` gives read- and (optionally) write- access to some bytes.  It has a record-size in bytes, which
 is the number of bytes in one record, and may contain many records.
 
-A number of implementations with different characteristics are included - `FileChannel`-based, a single
+A number of implementations with different characteristics are included - `FileChannel`-based (slow but low footprint), a single
 memory-mapped implementation for files where you can guarantee the file size will remain below the
 maximum size the operating system or available memory will be able to accomodate in a single memory-mapping.
 A multiple-memory-mapping version maintains as many memory-mappings as are needed to have the entire storage
@@ -48,7 +49,8 @@ they occur in the enum.  Each has a (primitive) type and a byte-offset into the 
 `IndexKind` that describes whether that field is unique or not, and should be treated as the canonical
 ordering - equivalent to a _primary key_ in SQL.
 
-Unique and many-to-many indexes are supported.
+Unique and many-to-many indexes are supported - while keys are sorted, there can be runs of any number
+of records that use the same key.
 
 Typically the canonical ordering is the position of the referenced record in the original data you're
 creating an index over - that way, your index only need contain the file offset and the one field
@@ -97,3 +99,14 @@ public enum Classes implements SchemaItem {
     }
 }
 ```
+
+Notes / Caveats
+---------------
+
+This library generally assumes the user knows the state of the files they are
+memory mapping and passes in correct values for things - in particular, if you want
+to use write methods, you need to pass in a read-write `FileChannel`, etc.
+
+Unlike most of the `com.mastfrog` libraries, this library requires JDK 16 or greater,
+since it relies on fixed-position read and write methods on buffers and channels which
+allow them to be effectively stateless.

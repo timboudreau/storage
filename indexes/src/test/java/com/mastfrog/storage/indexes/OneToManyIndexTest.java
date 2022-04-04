@@ -26,7 +26,7 @@ package com.mastfrog.storage.indexes;
 import com.mastfrog.bits.Bits;
 import com.mastfrog.storage.indexes.OneToManyIndex.OneToManyIndexReader.OneToManyValueConsumer;
 import com.mastfrog.storage.indexes.OneToManyIndex.OneToManyIndexReader.OneToManyValuePredicate;
-import com.mastfrog.storage.Storage.StorageSpecification;
+import com.mastfrog.storage.StorageSpecification;
 import com.mastfrog.storage.ValueType;
 import com.mastfrog.util.collections.CollectionUtils;
 import com.mastfrog.util.search.Bias;

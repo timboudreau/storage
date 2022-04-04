@@ -50,8 +50,16 @@ import java.util.function.LongUnaryOperator;
  */
 public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<ByteBuffer> {
 
-    public static long TWO_GB = 2147483648L;
+    public static long TWO_GB = 2_147_483_648L;
 
+    /**
+     * Create a storage based on the passed file channel.
+     * 
+     * @param channel A channel
+     * @param spec A spec
+     * @return A Storage
+     * @throws IOException if something goes wrong
+     */
     public static Storage create(FileChannel channel, StorageSpecification spec) throws IOException {
         if (spec.alwaysMapped) {
             if (channel.size() > TWO_GB) {
@@ -73,19 +81,47 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
         }
     }
 
+    /**
+     * Get an iterator over each record in the storage.
+     *
+     * @return An iterator
+     */
     @Override
     default Iterator<ByteBuffer> iterator() {
         return iteratorFrom(0);
     }
 
+    /**
+     * Get an iterator over each record in the storage starting
+     * with the passed record index.
+     *
+     * @return An iterator
+     */
     default Iterator<ByteBuffer> iteratorFrom(long startingRecord) {
         return new StorageIterator(this, startingRecord);
     }
 
+    /**
+     * Get an iterator over <code>long</code>s in every record occurring
+     * at the passed byte offset from the start of the record.
+     *
+     * @param byteOffset the number of bytes from the start of a record at
+     * which to read a long
+     * @return An iterator
+     */
     default PrimitiveIterator.OfLong longIterator(int byteOffset) {
         return new StorageIterator(this, 0).adapted(byteOffset);
     }
 
+    /**
+     * Get an iterator over <code>long</code>s in every record occurring
+     * at the passed byte offset from the start of the record.
+     *
+     * @param startingRecord The first record to return
+     * @param byteOffset the number of bytes from the start of a record at
+     * which to read a long
+     * @return An iterator
+     */
     default PrimitiveIterator.OfLong longIterator(long startingRecord, int byteOffset) {
         return new StorageIterator(this, startingRecord).adapted(byteOffset);
     }
@@ -95,8 +131,13 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
         return this;
     }
 
+    /**
+     * Get an optimized Spliterator suitable for multi-threaded access over this storage.
+     *
+     * @return A spliterator
+     */
     @Override
-    public default Spliterator<ByteBuffer> spliterator() {
+    default Spliterator<ByteBuffer> spliterator() {
         return new StorageSpliterator(this, 0, size());
     }
 
@@ -110,124 +151,6 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
         long sz = size();
         for (long i = 0; i < sz; i++) {
             action.accept(forIndex(i));
-        }
-    }
-
-    /**
-     * Describes the desired characteristics of a desired Storage instance
-     * without tying it to a specific implementation type. Setter methods mutate
-     * the instance.
-     */
-    public static class StorageSpecification {
-
-        boolean preferMapped = true;
-        boolean preferDirect = true;
-        boolean alwaysMapped = false;
-        boolean writable = true;
-        int concurrency = 4;
-        final int size;
-
-        public StorageSpecification(int size) {
-            this.size = size;
-        }
-
-        public Buffers buffers() {
-            return new Buffers(size, concurrency, preferDirect);
-        }
-
-        /**
-         * Creates a new instance with defaults and a size of zero for use as a
-         * template.
-         *
-         * @return A spec
-         */
-        public static StorageSpecification defaultSpec() {
-            return new StorageSpecification(0);
-        }
-
-        public boolean isReadWrite() {
-            return writable;
-        }
-
-        public boolean isDirect() {
-            return preferDirect;
-        }
-
-        public boolean isMapped() {
-            return alwaysMapped || preferMapped;
-        }
-
-        public StorageSpecification copy() {
-            StorageSpecification result = new StorageSpecification(size);
-            result.preferMapped = preferMapped;
-            result.preferDirect = preferDirect;
-            result.alwaysMapped = alwaysMapped;
-            result.writable = writable;
-            result.concurrency = concurrency;
-            return result;
-        }
-
-        public StorageSpecification withSize(int size) {
-            StorageSpecification result = new StorageSpecification(size);
-            result.preferMapped = preferMapped;
-            result.preferDirect = preferDirect;
-            result.alwaysMapped = alwaysMapped;
-            result.writable = writable;
-            result.concurrency = concurrency;
-            return result;
-        }
-
-        public StorageSpecification readOnly() {
-            writable = false;
-            return this;
-        }
-
-        public StorageSpecification readWrite() {
-            writable = true;
-            return this;
-        }
-
-        public StorageSpecification direct() {
-            preferDirect = true;
-            return this;
-        }
-
-        public StorageSpecification heap() {
-            preferDirect = false;
-            return this;
-        }
-
-        public StorageSpecification initiallyMapped() {
-            preferMapped = true;
-            return this;
-        }
-
-        public StorageSpecification initiallyUnmapped() {
-            preferMapped = false;
-            return this;
-        }
-
-        public StorageSpecification alwaysMapped() {
-            preferMapped = true;
-            alwaysMapped = true;
-            return this;
-        }
-
-        /**
-         * This is not the usual meaning of "concurrency" - it refers to how
-         * many buffers may be used by a <i>single</i> thread such that none of
-         * them should be recycled - i.e. when sorting, one needs at least two
-         * buffers if you want to compare their contents - recycling the same
-         * buffer and changing its contents would be counterproductive.
-         * <p>
-         * Storage uses a thread local pool of buffers.
-         *
-         * @param val The number of buffers in each thread's pool
-         * @return this
-         */
-        public StorageSpecification concurrency(int val) {
-            concurrency = val;
-            return this;
         }
     }
 
@@ -429,6 +352,7 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
         return record * (long) recordSize();
     }
 
+    @Override
     default long size() {
         long b = sizeInBytes();
         if (b == 0) {

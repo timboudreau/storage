@@ -38,11 +38,11 @@ public interface SchemaItem extends RecordElement {
     default int byteOffset() {
         SchemaItem[] all = getClass().getEnumConstants();
         int base = Integer.BYTES;
-        for (int i = 0; i < all.length; i++) {
-            if (all[i] == this) {
+        for (SchemaItem all1 : all) {
+            if (all1 == this) {
                 break;
             } else {
-                base += all[i].type().size();
+                base += all1.type().size();
             }
         }
         return base;

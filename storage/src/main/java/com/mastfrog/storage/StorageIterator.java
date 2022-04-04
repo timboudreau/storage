@@ -61,7 +61,7 @@ public final class StorageIterator implements Iterator<ByteBuffer> {
     private class Adapted implements PrimitiveIterator.OfLong {
         private final int offset;
 
-        public Adapted(int offset) {
+        Adapted(int offset) {
             this.offset = offset;
         }
 
@@ -74,7 +74,5 @@ public final class StorageIterator implements Iterator<ByteBuffer> {
         public boolean hasNext() {
             return StorageIterator.this.hasNext();
         }
-
     }
-
 }

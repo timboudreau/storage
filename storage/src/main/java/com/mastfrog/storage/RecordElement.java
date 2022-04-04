@@ -33,10 +33,26 @@ import java.nio.ByteBuffer;
  */
 public interface RecordElement {
 
+    /**
+     * The type of value at the position of this element within a record.
+     *
+     * @return A value type
+     */
     ValueType type();
 
+    /**
+     * The byte offset from the start of a record at which this element occurs.
+     *
+     * @return A byte offset, &gt;= 0
+     */
     int byteOffset();
 
+    /**
+     * Read a value at a given offset, returning it as a long.
+     *
+     * @param buf A buffer
+     * @return A long
+     */
     default long read(ByteBuffer buf) {
         return type().read(byteOffset(), buf);
     }

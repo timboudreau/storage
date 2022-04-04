@@ -23,10 +23,10 @@
  */
 package com.mastfrog.storage.indexes;
 
-import com.mastfrog.storage.indexes.SchemaItem.IndexKind;
-import com.mastfrog.storage.Storage;
-import com.mastfrog.storage.Storage.StorageSpecification;
 import com.mastfrog.function.throwing.io.IORunnable;
+import com.mastfrog.storage.Storage;
+import com.mastfrog.storage.StorageSpecification;
+import com.mastfrog.storage.indexes.SchemaItem.IndexKind;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -60,7 +60,7 @@ class BaseWriter<S extends Enum<S> & SchemaItem> implements IndexWriter {
     private final AtomicLong writeThread = new AtomicLong();
     private final AtomicBoolean hasMultiThreadedWrites = new AtomicBoolean();
 
-    public BaseWriter(Path dir, String name, Set<S> indices, int recordSize, StorageSpecification spec) throws IOException {
+    BaseWriter(Path dir, String name, Set<S> indices, int recordSize, StorageSpecification spec) throws IOException {
         buf = ThreadLocal.withInitial(() -> ByteBuffer.allocateDirect(recordSize));
         this.indices = indices;
         this.dir = dir;
@@ -158,7 +158,7 @@ class BaseWriter<S extends Enum<S> & SchemaItem> implements IndexWriter {
 
     private void sortByCanonicalOrderingAndRenumber() throws IOException {
         System.out.println("Have multithreaded writes - sorting base");
-        Storage.StorageSpecification spec = this.spec.copy().alwaysMapped().readWrite().concurrency(4);
+        StorageSpecification spec = this.spec.copy().alwaysMapped().readWrite().concurrency(4);
         Storage stor = Storage.create(channel, spec);
         stor.sort(canonicalOrderingField.byteOffset(), canonicalOrderingField.type());
 
@@ -184,7 +184,7 @@ class BaseWriter<S extends Enum<S> & SchemaItem> implements IndexWriter {
             long then = System.currentTimeMillis();
             try (final FileChannel ch = FileChannel.open(nue, StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
                 ch.transferFrom(channel, 0, channel.size());
-                Storage.StorageSpecification spec = this.spec.copy().alwaysMapped().readWrite().concurrency(2);
+                StorageSpecification spec = this.spec.copy().alwaysMapped().readWrite().concurrency(2);
                 Storage stor = Storage.create(ch, spec);
                 stor.sort(s.byteOffset(), s.type());
             }

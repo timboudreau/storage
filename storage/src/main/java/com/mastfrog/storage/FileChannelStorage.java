@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntFunction;
 
 /**
+ * Slower but non-memory-intensive storage that uses a FileChannel under the hood.
  *
  * @author Tim Boudreau
  */
@@ -112,7 +113,7 @@ public class FileChannelStorage implements Storage, AutoCloseable {
     }
 
     static void quietly(IORunnable r) {
-        r.toRunnable().run();;
+        r.toRunnable().run();
     }
 
     @Override

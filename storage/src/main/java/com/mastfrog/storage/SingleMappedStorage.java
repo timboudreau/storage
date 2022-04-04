@@ -29,6 +29,7 @@ import java.nio.MappedByteBuffer;
 import java.util.function.IntFunction;
 
 /**
+ * Mapped storage that fits within a single memory mapped buffer.
  *
  * @author Tim Boudreau
  */

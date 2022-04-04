@@ -37,7 +37,7 @@ import java.util.function.LongUnaryOperator;
 public class LongArrayAtomic implements LongArray {
 
     private final long MAX = Integer.MAX_VALUE / 2;
-    private AtomicLongArray[] partitions;
+    private final AtomicLongArray[] partitions;
     private long size;
 
     LongArrayAtomic(long size) {

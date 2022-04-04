@@ -83,7 +83,7 @@ public class AdaptiveStorage implements Storage {
         byteSize = channel.size();
     }
 
-    public Storage createMappedStorage(FileChannel channel1, int recordSize1, boolean preferDirectBuffers, IntFunction<Buffers> buffersFactory) throws IOException {
+    private Storage createMappedStorage(FileChannel channel1, int recordSize1, boolean preferDirectBuffers, IntFunction<Buffers> buffersFactory) throws IOException {
         Storage initial;
         if (channel1.size() < TWO_GB) {
             initial = new SingleMappedStorage(recordSize1, channel1.map(mapMode, 0, channel1.size()), preferDirectBuffers, buffersFactory);

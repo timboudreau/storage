@@ -170,6 +170,7 @@ public class IntSetBits implements MutableBits, Serializable {
         return MutableBits.super.contentEquals(other);
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;
@@ -180,6 +181,7 @@ public class IntSetBits implements MutableBits, Serializable {
         return contentEquals(b);
     }
 
+    @Override
     public int hashCode() {
         return bitsHashCode();
     }
@@ -227,10 +229,8 @@ public class IntSetBits implements MutableBits, Serializable {
         }
         if (other instanceof IntSetBits) {
             intSet.addAll(((IntSetBits) other).intSet);
-            return;
         } else {
             other.forEachSetBitAscending((int bit) -> intSet.add(bit));
-            return;
         }
     }
 

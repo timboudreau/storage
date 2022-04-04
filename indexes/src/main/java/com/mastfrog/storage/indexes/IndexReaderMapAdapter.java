@@ -36,7 +36,7 @@ class IndexReaderMapAdapter<S extends Enum<S> & SchemaItem> implements IntMatrix
     private final IndexReader<S> reader;
     private final S field;
 
-    public IndexReaderMapAdapter(IndexReader<S> reader, S field) {
+    IndexReaderMapAdapter(IndexReader<S> reader, S field) {
         this.reader = reader;
         this.field = field;
     }

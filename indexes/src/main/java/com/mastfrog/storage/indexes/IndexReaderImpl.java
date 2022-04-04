@@ -24,7 +24,7 @@
 package com.mastfrog.storage.indexes;
 
 import com.mastfrog.storage.Storage;
-import com.mastfrog.storage.Storage.StorageSpecification;
+import com.mastfrog.storage.StorageSpecification;
 import com.mastfrog.storage.ValueType;
 import com.mastfrog.util.preconditions.Exceptions;
 import com.mastfrog.util.search.Bias;
@@ -99,6 +99,7 @@ final class IndexReaderImpl<S extends Enum<S> & SchemaItem> implements IndexRead
         return sb.toString();
     }
 
+    @Override
     public String name() {
         return name;
     }
@@ -121,6 +122,7 @@ final class IndexReaderImpl<S extends Enum<S> & SchemaItem> implements IndexRead
         });
     }
 
+    @Override
     public long size() {
         return primaryStorage.size();
     }

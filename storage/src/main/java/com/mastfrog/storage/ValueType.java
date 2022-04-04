@@ -39,6 +39,7 @@ public enum ValueType {
      */
     LONG128;
 
+    @Override
     public String toString() {
         switch (this) {
             case UNSIGNED_INT:
@@ -155,6 +156,7 @@ public enum ValueType {
             return new Long128(0, num.longValue());
         }
 
+        @Override
         public String toString() {
             StringBuilder result = new StringBuilder();
             Strings.appendPaddedHex(msqw, result);

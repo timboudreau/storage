@@ -28,7 +28,7 @@ import com.mastfrog.bits.MutableBits;
 import com.mastfrog.storage.indexes.OneToManyIndex.OneToManyIndexWriter;
 import com.mastfrog.storage.Buffers;
 import com.mastfrog.storage.Storage;
-import com.mastfrog.storage.Storage.Spec;
+import com.mastfrog.storage.Storage.StorageSpecification;
 import com.mastfrog.storage.StorageIterator;
 import com.mastfrog.storage.ValueType;
 import com.mastfrog.function.LongBiConsumer;
@@ -65,9 +65,9 @@ public class OneToManyIndex {
 
     private final Path dir;
     private final String name;
-    private final Spec spec;
+    private final StorageSpecification spec;
 
-    public OneToManyIndex(Path dir, String name, Spec spec) {
+    public OneToManyIndex(Path dir, String name, StorageSpecification spec) {
         this.dir = dir;
         this.name = name;
         this.spec = spec.withSize(Long.BYTES * 3).concurrency(4);
@@ -112,13 +112,13 @@ public class OneToManyIndex {
 
         private final FileChannel channel;
         private final Buffers buffers;
-        private final Spec spec;
+        private final StorageSpecification spec;
         private boolean buildInvertedIndex;
         private final String name;
         private final Path dir;
         private FileChannel invertedChannel;
 
-        OneToManyIndexWriterImpl(FileChannel channel, Spec spec, String name, Path dir) {
+        OneToManyIndexWriterImpl(FileChannel channel, StorageSpecification spec, String name, Path dir) {
             this.spec = spec.withSize(Long.BYTES * 3).readWrite();
             buffers = this.spec.buffers();
             this.channel = channel;
@@ -180,7 +180,7 @@ public class OneToManyIndex {
                 Path countFile = dir.resolve(name + ".counts");
                 System.out.println("Write countfile " + countFile);
                 long then = System.currentTimeMillis();
-                Spec spec = this.spec.withSize(Long.BYTES + Integer.BYTES * 2);
+                StorageSpecification spec = this.spec.withSize(Long.BYTES + Integer.BYTES * 2);
                 try (FileChannel channel = FileChannel.open(countFile, CREATE,
                         READ, WRITE, TRUNCATE_EXISTING)) {
                     long last = Long.MAX_VALUE;
@@ -346,7 +346,7 @@ public class OneToManyIndex {
         }
     }
 
-    private static void createInverseIndex(Path dir, String name, OneToManyIndexReader index, Spec spec) throws IOException {
+    private static void createInverseIndex(Path dir, String name, OneToManyIndexReader index, StorageSpecification spec) throws IOException {
         Path inv = dir.resolve(name + ".m21");
         if (!Files.exists(inv)) {
             System.out.println("Dynamically creating inverse index " + inv);
@@ -395,15 +395,15 @@ public class OneToManyIndex {
         private OneToManyIndexReaderImpl sibling;
         private boolean isInverse;
         private final String name;
-        private final Spec spec;
+        private final StorageSpecification spec;
         private final Path dir;
         private volatile boolean closed;
 
-        public OneToManyIndexReaderImpl(Path dir, String name, Spec spec) throws IOException {
+        public OneToManyIndexReaderImpl(Path dir, String name, StorageSpecification spec) throws IOException {
             this(dir, name, spec, false);
         }
 
-        public OneToManyIndexReaderImpl(Path dir, String name, Spec spec, boolean isInverse) throws IOException {
+        public OneToManyIndexReaderImpl(Path dir, String name, StorageSpecification spec, boolean isInverse) throws IOException {
             Path index = dir.resolve(name + (isInverse ? ".m21" : ".12m"));
             Path counts = dir.resolve(name + ".counts");
             spec = spec.withSize(Long.BYTES * 3);

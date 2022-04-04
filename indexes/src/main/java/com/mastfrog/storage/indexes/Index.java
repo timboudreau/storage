@@ -23,7 +23,7 @@
  */
 package com.mastfrog.storage.indexes;
 
-import com.mastfrog.storage.Storage.Spec;
+import com.mastfrog.storage.Storage.StorageSpecification;
 import com.mastfrog.storage.ValueType;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -31,9 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -63,18 +61,18 @@ public final class Index<S extends Enum<S> & SchemaItem> {
     private final int recordSize;
     private Set<S> unique;
     private final String name;
-    private Spec spec;
+    private StorageSpecification spec;
 
     public Index(Path dir, Class<S> type) {
         this(dir, type.getSimpleName(), type);
     }
 
     public Index(Path dir, String name, Class<S> type) {
-        this(dir, name, type, new Spec(0)
+        this(dir, name, type, new StorageSpecification(0)
                 .concurrency(4).readOnly().direct().alwaysMapped());
     }
 
-    public Index(Path dir, String name, Class<S> type, Spec template) {
+    public Index(Path dir, String name, Class<S> type, StorageSpecification template) {
         this.dir = dir;
         this.name = name;
         unique = EnumSet.noneOf(type);
@@ -216,7 +214,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
     static class Writer1<S extends Enum<S> & SchemaItem> extends BaseWriter<S> {
 
         Writer1(Path dir, String name, Set<S> indices, int recordSize,
-                Spec spec) throws IOException {
+                StorageSpecification spec) throws IOException {
             super(dir, name, indices, recordSize, spec);
         }
 
@@ -231,7 +229,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
     static class Writer2<S extends Enum<S> & SchemaItem> extends BaseWriter<S> {
 
         Writer2(Path dir, String name, Set<S> indices, int recordSize,
-                Spec spec) throws IOException {
+                StorageSpecification spec) throws IOException {
             super(dir, name, indices, recordSize, spec);
         }
 
@@ -247,7 +245,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
     static class Writer3<S extends Enum<S> & SchemaItem> extends BaseWriter<S> {
 
         Writer3(Path dir, String name, Set<S> indices, int recordSize,
-                Spec spec) throws IOException {
+                StorageSpecification spec) throws IOException {
             super(dir, name, indices, recordSize, spec);
         }
 
@@ -264,7 +262,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
     static class Writer4<S extends Enum<S> & SchemaItem> extends BaseWriter<S> {
 
         Writer4(Path dir, String name, Set<S> indices, int recordSize,
-                Spec spec) throws IOException {
+                StorageSpecification spec) throws IOException {
             super(dir, name, indices, recordSize, spec);
         }
 
@@ -282,7 +280,7 @@ public final class Index<S extends Enum<S> & SchemaItem> {
     static class Writer5<S extends Enum<S> & SchemaItem> extends BaseWriter<S> {
 
         Writer5(Path dir, String name, Set<S> indices, int recordSize,
-                Spec spec) throws IOException {
+                StorageSpecification spec) throws IOException {
             super(dir, name, indices, recordSize, spec);
         }
 

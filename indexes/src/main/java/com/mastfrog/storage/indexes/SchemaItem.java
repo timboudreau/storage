@@ -23,8 +23,6 @@
  */
 package com.mastfrog.storage.indexes;
 
-import com.mastfrog.storage.ValueType;
-import java.nio.ByteBuffer;
 import com.mastfrog.storage.RecordElement;
 
 /**

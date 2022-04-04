@@ -24,7 +24,7 @@
 package com.mastfrog.storage.indexes;
 
 import com.mastfrog.storage.Storage;
-import com.mastfrog.storage.Storage.Spec;
+import com.mastfrog.storage.Storage.StorageSpecification;
 import com.mastfrog.storage.ValueType;
 import com.mastfrog.util.preconditions.Exceptions;
 import com.mastfrog.util.search.Bias;
@@ -50,13 +50,13 @@ final class IndexReaderImpl<S extends Enum<S> & SchemaItem> implements IndexRead
     private final Storage primaryStorage;
     private final Map<S, Storage> secondary = new ConcurrentHashMap<>();
     private final int recordSize;
-    private final Spec spec;
+    private final StorageSpecification spec;
 
     IndexReaderImpl(String name, Path dir, Set<S> indexed, int recordSize) throws IOException {
-        this(name, dir, indexed, recordSize, Spec.defaultSpec().readOnly());
+        this(name, dir, indexed, recordSize, StorageSpecification.defaultSpec().readOnly());
     }
 
-    IndexReaderImpl(String name, Path dir, Set<S> indexed, int recordSize, Spec spec) throws IOException {
+    IndexReaderImpl(String name, Path dir, Set<S> indexed, int recordSize, StorageSpecification spec) throws IOException {
         this.name = name;
         this.dir = dir;
         this.indexed = indexed;

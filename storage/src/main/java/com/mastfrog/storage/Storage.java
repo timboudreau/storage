@@ -52,7 +52,7 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
 
     public static long TWO_GB = 2147483648L;
 
-    public static Storage create(FileChannel channel, Spec spec) throws IOException {
+    public static Storage create(FileChannel channel, StorageSpecification spec) throws IOException {
         if (spec.alwaysMapped) {
             if (channel.size() > TWO_GB) {
                 return new MultiMappedStorage(spec.size, channel,
@@ -118,7 +118,7 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
      * without tying it to a specific implementation type. Setter methods mutate
      * the instance.
      */
-    public static class Spec {
+    public static class StorageSpecification {
 
         boolean preferMapped = true;
         boolean preferDirect = true;
@@ -127,7 +127,7 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
         int concurrency = 4;
         final int size;
 
-        public Spec(int size) {
+        public StorageSpecification(int size) {
             this.size = size;
         }
 
@@ -141,8 +141,8 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
          *
          * @return A spec
          */
-        public static Spec defaultSpec() {
-            return new Spec(0);
+        public static StorageSpecification defaultSpec() {
+            return new StorageSpecification(0);
         }
 
         public boolean isReadWrite() {
@@ -157,8 +157,8 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
             return alwaysMapped || preferMapped;
         }
 
-        public Spec copy() {
-            Spec result = new Spec(size);
+        public StorageSpecification copy() {
+            StorageSpecification result = new StorageSpecification(size);
             result.preferMapped = preferMapped;
             result.preferDirect = preferDirect;
             result.alwaysMapped = alwaysMapped;
@@ -167,8 +167,8 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
             return result;
         }
 
-        public Spec withSize(int size) {
-            Spec result = new Spec(size);
+        public StorageSpecification withSize(int size) {
+            StorageSpecification result = new StorageSpecification(size);
             result.preferMapped = preferMapped;
             result.preferDirect = preferDirect;
             result.alwaysMapped = alwaysMapped;
@@ -177,37 +177,37 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
             return result;
         }
 
-        public Spec readOnly() {
+        public StorageSpecification readOnly() {
             writable = false;
             return this;
         }
 
-        public Spec readWrite() {
+        public StorageSpecification readWrite() {
             writable = true;
             return this;
         }
 
-        public Spec direct() {
+        public StorageSpecification direct() {
             preferDirect = true;
             return this;
         }
 
-        public Spec heap() {
+        public StorageSpecification heap() {
             preferDirect = false;
             return this;
         }
 
-        public Spec initiallyMapped() {
+        public StorageSpecification initiallyMapped() {
             preferMapped = true;
             return this;
         }
 
-        public Spec initiallyUnmapped() {
+        public StorageSpecification initiallyUnmapped() {
             preferMapped = false;
             return this;
         }
 
-        public Spec alwaysMapped() {
+        public StorageSpecification alwaysMapped() {
             preferMapped = true;
             alwaysMapped = true;
             return this;
@@ -225,7 +225,7 @@ public interface Storage extends Swapper, LongIndexed<ByteBuffer>, Iterable<Byte
          * @param val The number of buffers in each thread's pool
          * @return this
          */
-        public Spec concurrency(int val) {
+        public StorageSpecification concurrency(int val) {
             concurrency = val;
             return this;
         }

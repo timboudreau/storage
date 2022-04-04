@@ -23,7 +23,6 @@
  */
 package com.mastfrog.storage.indexes;
 
-import com.mastfrog.bits.AtomicBits;
 import com.mastfrog.bits.MutableBits;
 import com.mastfrog.bits.collections.IntMatrixMap;
 import com.mastfrog.bits.large.LongArray;

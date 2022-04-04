@@ -25,8 +25,7 @@ package com.mastfrog.storage.indexes;
 
 import com.mastfrog.storage.indexes.SchemaItem.IndexKind;
 import com.mastfrog.storage.Storage;
-import com.mastfrog.storage.Storage.Spec;
-import com.mastfrog.storage.ValueType;
+import com.mastfrog.storage.Storage.StorageSpecification;
 import com.mastfrog.function.throwing.io.IORunnable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -36,12 +35,8 @@ import java.nio.file.StandardOpenOption;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.READ;
 import static java.nio.file.StandardOpenOption.WRITE;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,12 +55,12 @@ class BaseWriter<S extends Enum<S> & SchemaItem> implements IndexWriter {
     final int recordSize;
     protected final ThreadLocal<ByteBuffer> buf;
     private int index;
-    private final Spec spec;
+    private final StorageSpecification spec;
     private final S canonicalOrderingField;
     private final AtomicLong writeThread = new AtomicLong();
     private final AtomicBoolean hasMultiThreadedWrites = new AtomicBoolean();
 
-    public BaseWriter(Path dir, String name, Set<S> indices, int recordSize, Spec spec) throws IOException {
+    public BaseWriter(Path dir, String name, Set<S> indices, int recordSize, StorageSpecification spec) throws IOException {
         buf = ThreadLocal.withInitial(() -> ByteBuffer.allocateDirect(recordSize));
         this.indices = indices;
         this.dir = dir;
@@ -163,7 +158,7 @@ class BaseWriter<S extends Enum<S> & SchemaItem> implements IndexWriter {
 
     private void sortByCanonicalOrderingAndRenumber() throws IOException {
         System.out.println("Have multithreaded writes - sorting base");
-        Storage.Spec spec = this.spec.copy().alwaysMapped().readWrite().concurrency(4);
+        Storage.StorageSpecification spec = this.spec.copy().alwaysMapped().readWrite().concurrency(4);
         Storage stor = Storage.create(channel, spec);
         stor.sort(canonicalOrderingField.byteOffset(), canonicalOrderingField.type());
 
@@ -189,7 +184,7 @@ class BaseWriter<S extends Enum<S> & SchemaItem> implements IndexWriter {
             long then = System.currentTimeMillis();
             try (final FileChannel ch = FileChannel.open(nue, StandardOpenOption.READ, StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
                 ch.transferFrom(channel, 0, channel.size());
-                Storage.Spec spec = this.spec.copy().alwaysMapped().readWrite().concurrency(2);
+                Storage.StorageSpecification spec = this.spec.copy().alwaysMapped().readWrite().concurrency(2);
                 Storage stor = Storage.create(ch, spec);
                 stor.sort(s.byteOffset(), s.type());
             }

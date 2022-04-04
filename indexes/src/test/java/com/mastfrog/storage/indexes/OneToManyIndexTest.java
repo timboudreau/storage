@@ -26,7 +26,7 @@ package com.mastfrog.storage.indexes;
 import com.mastfrog.bits.Bits;
 import com.mastfrog.storage.indexes.OneToManyIndex.OneToManyIndexReader.OneToManyValueConsumer;
 import com.mastfrog.storage.indexes.OneToManyIndex.OneToManyIndexReader.OneToManyValuePredicate;
-import com.mastfrog.storage.Storage.Spec;
+import com.mastfrog.storage.Storage.StorageSpecification;
 import com.mastfrog.storage.ValueType;
 import com.mastfrog.util.collections.CollectionUtils;
 import com.mastfrog.util.search.Bias;
@@ -65,7 +65,7 @@ public class OneToManyIndexTest {
     @Test
     public void testBasicSearch() throws Exception {
         OneToManyIndex ix = new OneToManyIndex(DIR, "basic",
-                Spec.defaultSpec().alwaysMapped().readWrite().concurrency(4));
+                StorageSpecification.defaultSpec().alwaysMapped().readWrite().concurrency(4));
         Map<Long, List<Long>> items = CollectionUtils.supplierMap(() -> new ArrayList<>());
         int index = 0;
         try (OneToManyIndex.OneToManyIndexWriter w = ix.writer()) {
@@ -168,7 +168,7 @@ public class OneToManyIndexTest {
                 }
             }
         }
-        OneToManyIndex o2m = new OneToManyIndex(DIR, "ixs-o2m", Spec.defaultSpec());
+        OneToManyIndex o2m = new OneToManyIndex(DIR, "ixs-o2m", StorageSpecification.defaultSpec());
         try (OneToManyIndex.OneToManyIndexWriter w = o2m.writer()) {
             for (int i = 0; i < all.length; i++) {
                 Set<Long> children = kids.get(all[i]);

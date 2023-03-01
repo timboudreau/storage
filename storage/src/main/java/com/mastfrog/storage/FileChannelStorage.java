@@ -32,7 +32,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntFunction;
 
 /**
- * Slower but non-memory-intensive storage that uses a FileChannel under the hood.
+ * Slower but non-memory-intensive storage that uses a FileChannel under the
+ * hood.
  *
  * @author Tim Boudreau
  */
@@ -65,8 +66,7 @@ public class FileChannelStorage implements Storage, AutoCloseable {
         ByteBuffer buf = buffers.get(usageCount.getAndIncrement());
         quietly(() -> {
             int readCount = channel.read(buf, offsetOf(index));
-            assert readCount == recordSize()
-                    : "Only read " + readCount + " / " + recordSize();
+            assert readCount == recordSize() : "Only read " + readCount + " / " + recordSize();
         }
         );
         buf.flip();
@@ -78,8 +78,7 @@ public class FileChannelStorage implements Storage, AutoCloseable {
         ByteBuffer buf = buffers.get(usageCount.getAndIncrement());
         quietly(() -> {
             int readCount = channel.read(buf, offsetOf(record));
-            assert readCount == recordSize()
-                    : "Only read " + readCount + " / " + recordSize();
+            assert readCount == recordSize() : "Only read " + readCount + " / " + recordSize();
         }
         );
         buf.flip();
@@ -113,7 +112,7 @@ public class FileChannelStorage implements Storage, AutoCloseable {
     }
 
     static void quietly(IORunnable r) {
-        r.toRunnable().run();
+        r.toNonThrowing().run();
     }
 
     @Override

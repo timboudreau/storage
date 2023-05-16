@@ -113,7 +113,7 @@ public class FileChannelStorage implements Storage, AutoCloseable {
     }
 
     static void quietly(IORunnable r) {
-        r.toRunnable().run();
+        r.toNonThrowing().run();
     }
 
     @Override

@@ -93,10 +93,10 @@ public interface IndexReader<S extends Enum<S> & SchemaItem> extends AutoCloseab
         long longCount = sz / 64;
 
 //        LongArrayAtomic laa = new LongArrayAtomic(longCount);
-        LongArray laa = LongArray.unsafeLongArray(longCount);
-        MutableBits bts = laa.toBitSet().toBits();
+//        LongArray laa = UnsafeLongArray.unsafeLongArray(longCount);
 //        AtomicBits bits = AtomicBits.
-//        LongArray lng = LongArray.javaLongArray(0)
+        LongArray lng = LongArray.javaLongArray((int) longCount);
+        MutableBits bts = lng.toBitSet().toBits();
 
         IntMatrixMap ato = IntMatrixMap.create(bts, (int) size);
         System.out.println("Cap " + ato.capacity());
